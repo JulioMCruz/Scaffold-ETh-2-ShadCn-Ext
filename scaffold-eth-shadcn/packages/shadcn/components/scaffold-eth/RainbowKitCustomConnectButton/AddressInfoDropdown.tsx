@@ -18,6 +18,8 @@ import { useOutsideClick } from "~~/hooks/scaffold-eth";
 import { getTargetNetworks } from "~~/utils/scaffold-eth";
 import { Bug, ChevronDown, Copy, ExternalLink, QrCode, LogOut } from "lucide-react"
 import { Button } from "~~/components/ui/button";
+import QRCodeModal from "~~/components/qr-code-modal";
+import AddressQRCodeModal from "./AddressQRCodeModal";
 
 
 
@@ -45,7 +47,9 @@ export const AddressInfoDropdown = ({
   const dropdownRef = useRef<HTMLDetailsElement>(null);
   const closeDropdown = () => {
     setSelectingNetwork(false);
-    dropdownRef.current?.removeAttribute("open");
+    // dropdownRef.current?.removeAttribute("open");
+    setIsDropdownOpen(false);
+    console.log("closeDropdown");
   };
   useOutsideClick(dropdownRef, closeDropdown);
 
@@ -175,7 +179,8 @@ export const AddressInfoDropdown = ({
         </ul>
       </details> */}
 
-      <div className="relative">
+      <details ref={dropdownRef} className="hidden" />
+      <div className="relative" >
         <button
           onClick={toggleDropdown}
           className="flex items-center space-x-2 bg-[#3A4A5F] rounded-md px-2 py-1 hover:bg-[#455A70] transition-colors"
@@ -225,7 +230,8 @@ export const AddressInfoDropdown = ({
           </div>
         )}
       </div>
-
+      {/* QR Code Modal */}
+      <AddressQRCodeModal isOpen={isQRModalOpen} onClose={() => setIsQRModalOpen(false)} address={address} />
     </>
   );
 };

@@ -1,33 +1,53 @@
+"use client"
+
+import { useState, useEffect } from "react"
+import { X, Copy } from "lucide-react"
 import { QRCodeSVG } from "qrcode.react";
 import { Address as AddressType } from "viem";
 import { Address } from "~~/components/scaffold-eth";
 
-type AddressQRCodeModalProps = {
-  address: AddressType;
-  modalId: string;
-};
+interface QRCodeModalProps {
+  isOpen: boolean
+  onClose: () => void
+  address: string
+}
 
-export const AddressQRCodeModal = ({ address, modalId }: AddressQRCodeModalProps) => {
+export default function AddressQRCodeModal({ isOpen, onClose, address }: QRCodeModalProps) {
+  const [copied, setCopied] = useState(false)
+
+  useEffect(() => {
+    if (copied) {
+      const timer = setTimeout(() => setCopied(false), 2000)
+      return () => clearTimeout(timer)
+    }
+  }, [copied])
+
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) onClose()
+  }
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(address)
+    setCopied(true)
+  };
+
+  if (!isOpen) return null;
+
   return (
-    <>
-      <div>
-        <input type="checkbox" id={`${modalId}`} className="modal-toggle" />
-        <label htmlFor={`${modalId}`} className="modal cursor-pointer">
-          <label className="modal-box relative">
-            {/* dummy input to capture event onclick on modal box */}
-            <input className="h-0 w-0 absolute top-0 left-0" />
-            <label htmlFor={`${modalId}`} className="btn btn-ghost btn-sm btn-circle absolute right-3 top-3">
-              ✕
-            </label>
-            <div className="space-y-3 py-6">
-              <div className="flex flex-col items-center gap-6">
-                <QRCodeSVG value={address} size={256} />
-                <Address address={address} format="long" disableAddressLink onlyEnsOrAddress />
-              </div>
-            </div>
-          </label>
-        </label>
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={handleBackdropClick}>
+      <div className="bg-[#3A4A6A] rounded-lg shadow-lg w-lg p-6 relative">
+        <button onClick={onClose} className="absolute top-3 right-3 text-gray-300 hover:text-white">
+          <X className="h-5 w-5" />
+        </button>
+        <div className="flex flex-col items-center">
+          <div className="bg-white p-3 rounded-lg mb-4">
+            <QRCodeSVG value={address} size={256} />
+          </div>
+          <div className="flex items-center space-x-2 bg-[#2D3748] rounded-md px-3 py-2 w-full">
+            <Address address={address} format="long" disableAddressLink onlyEnsOrAddress />
+          </div>
+        </div>
       </div>
-    </>
+    </div>
   );
-};
+}
