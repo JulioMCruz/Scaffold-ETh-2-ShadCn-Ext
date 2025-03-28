@@ -16,10 +16,6 @@ import {
 import { BlockieAvatar, isENS } from "~~/components/scaffold-eth";
 import { useOutsideClick } from "~~/hooks/scaffold-eth";
 import { getTargetNetworks } from "~~/utils/scaffold-eth";
-import { Bug, ChevronDown, Copy, ExternalLink, QrCode, LogOut } from "lucide-react"
-import { Button } from "~~/components/ui/button";
-
-
 
 const allowedNetworks = getTargetNetworks();
 
@@ -49,47 +45,9 @@ export const AddressInfoDropdown = ({
   };
   useOutsideClick(dropdownRef, closeDropdown);
 
-  /* ********************* */
-
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  // const address = "0x024F...3d19";
-  const [isQRModalOpen, setIsQRModalOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
-
-   const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen)
-  }
-
-  const copyAddress = () => {
-    navigator.clipboard.writeText(address);
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-    setIsDropdownOpen(false)
-  }
-
-  const openQRModal = () => {
-    setIsQRModalOpen(true)
-    setIsDropdownOpen(false)
-  }
-
-  const viewOnBlockExplorer = () => {
-    window.open(`${blockExplorerAddressLink}`, "_blank");
-    setIsDropdownOpen(false)
-  }
-
-  // const disconnect = () => {
-  //   // Implement disconnect logic here
-  //   console.log("Disconnected")
-  //   setIsDropdownOpen(false)
-  // }
-
-  //* ********************* */
-
-
-
   return (
     <>
-      {/* <details ref={dropdownRef} className="dropdown dropdown-end leading-3">
+      <details ref={dropdownRef} className="dropdown dropdown-end leading-3">
         <summary tabIndex={0} className="btn btn-secondary btn-sm pl-0 pr-2 shadow-md dropdown-toggle gap-0 !h-auto">
           <BlockieAvatar address={checkSumAddress} size={30} ensImage={ensAvatar} />
           <span className="ml-2 mr-1">
@@ -173,59 +131,7 @@ export const AddressInfoDropdown = ({
             </button>
           </li>
         </ul>
-      </details> */}
-
-      <div className="relative">
-        <button
-          onClick={toggleDropdown}
-          className="flex items-center space-x-2 bg-[#3A4A5F] rounded-md px-2 py-1 hover:bg-[#455A70] transition-colors"
-        >
-          <div className="bg-green-500 rounded-full w-6 h-6 flex items-center justify-center">
-            <BlockieAvatar address={checkSumAddress} size={30} ensImage={ensAvatar} />
-          </div>
-          <span className="text-sm">
-            {isENS(displayName) ? displayName : checkSumAddress?.slice(0, 6) + "..." + checkSumAddress?.slice(-4)}
-          </span>
-          <ChevronDownIcon className="h-6 w-4 ml-2 sm:ml-0" />
-        </button>
-
-        {isDropdownOpen && (
-          <div className="absolute right-0 mt-2 w-64 bg-[#2D3748] rounded-md shadow-lg z-10 border border-[#3A4A6A]">
-            <div className="py-1">
-              <NetworkOptions hidden={!selectingNetwork} />
-              <button
-                onClick={copyAddress}
-                className={`w-full px-4 py-3 text-sm text-gray-200 hover:bg-[#3A4A6A] flex items-center ${selectingNetwork ? "hidden" : ""}`}
-              >
-                <Copy className="h-4 w-4 mr-3" />
-                <span>Copy address</span>
-              </button>
-              <button
-                onClick={openQRModal}
-                className={`w-full px-4 py-3 text-sm text-gray-200 hover:bg-[#3A4A6A] flex items-center ${selectingNetwork ? "hidden" : ""}`}
-              >
-                <QrCode className="h-4 w-4 mr-3" />
-                <span>View QR Code</span>
-              </button>
-              <button
-                onClick={viewOnBlockExplorer}
-                className={`w-full px-4 py-3 text-sm text-gray-200 hover:bg-[#3A4A6A] flex items-center ${selectingNetwork ? "hidden" : ""}`}
-              >
-                <ExternalLink className="h-4 w-4 mr-3" />
-                <span>View on Block Explorer</span>
-              </button>
-              <Button
-                onClick={() => disconnect()}
-                className={`w-full px-4 py-3 text-sm text-red-400 hover:bg-[#3A4A6A] flex items-center ${selectingNetwork ? "hidden" : ""}`}
-              >
-                <LogOut className="h-4 w-4 mr-3" />
-                <span>Disconnect</span>
-              </Button>
-            </div>
-          </div>
-        )}
-      </div>
-
+      </details>
     </>
   );
 };
