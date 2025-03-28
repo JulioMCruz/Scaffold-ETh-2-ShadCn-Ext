@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 84% 4.9%;
+    --primary: 217.8 89.2% 78%;
+    --primary-foreground: 226 60.9% 17.3%;
+    --secondary: 217.9 100% 92.4%;
+    --secondary-foreground: 226 60.9% 17.3%;
+    --muted: 226 60.9% 17.3%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 217.8 89.2% 78%;
+    --accent-foreground: 226 60.9% 17.3%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 217.8 89.2% 78%;
+    --radius: 0.5rem;
+    --info: 217.8 89.2% 78%;
+    --success: 158.6 83.8% 57%;
+    --warning: 43 100% 72.5%;
+    --error: 14.3 100% 69.4%;
+  }
+
+  .dark {
+    --background: 226 60.9% 17.3%;
+    --foreground: 210 40% 98%;
+    --card: 226 60.9% 17.3%;
+    --card-foreground: 210 40% 98%;
+    --popover: 226 60.9% 17.3%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 226 60.9% 17.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 223.2 34.9% 28.8%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 223.2 34.9% 28.8%;
+    --muted-foreground: 215.4 16.3% 56.9%;
+    --accent: 221.2 39.3% 46.7%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
+    --info: 221.2 39.3% 46.7%;
+    --success: 158.6 83.8% 57%;
+    --warning: 43 100% 72.5%;
+    --error: 14.3 100% 69.4%;
+  }
+}
+
+@layer utilities {
+  .link {
+    text-underline-offset: 2px;
+  }
+  .link:hover {
+    opacity: 80%;
+  }
+}
+
+@layer components {
+  .tooltip {
+    --tooltip-tail: 6px;
+  }
+  
+  .dark .tooltip {
+    --tooltip-color: oklch(var(--p));
+  }
+} 

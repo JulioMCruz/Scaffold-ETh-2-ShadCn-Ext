@@ -1,0 +1,237 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# DaisyUI to shadcn/ui Migration Rules
+
+## Introduction
+This rule file guides the Cursor agent through migrating a Next.js application from DaisyUI to shadcn/ui using a monorepo structure. The monorepo will have a shared UI package with shadcn components that can be used across multiple applications.
+
+## Project Structure Creation
+
+### Task: Create Monorepo Structure
+- Create a new project directory
+- Initialize the directory structure:
+  ```
+  my-shadcn-monorepo/
+  ├── apps/
+  │   └── web/
+  ├── packages/
+  │   ├── ui/
+  │   ├── eslint-config/
+  │   └── typescript-config/
+  ├── pnpm-workspace.yaml
+  ├── turbo.json
+  ├── package.json
+  └── .gitignore
+  ```
+- Use `pnpm` as the package manager
+- Set up Turborepo for monorepo management
+
+### Task: Configure Root Package
+- Set up the root package.json with:
+  - Scripts: build, dev, lint, format
+  - Dependencies: turbo, prettier, typescript
+  - Workspaces configuration for apps/* and packages/*
+
+### Task: Set Up TypeScript Configuration
+- Create a base TypeScript configuration in packages/typescript-config
+- Create specific configurations for Next.js and React libraries
+- Ensure proper path aliases are configured
+
+### Task: Set Up ESLint Configuration
+- Create a shared ESLint configuration in packages/eslint-config
+- Set up specific configurations for Next.js and React components
+
+## UI Package Setup
+
+### Task: Initialize UI Package
+- Create package.json for the UI package with dependencies:
+  - React, React DOM
+  - tailwind-merge, class-variance-authority, clsx
+  - @radix-ui packages needed for shadcn components
+  - lucide-react for icons
+- Set up the directory structure:
+  ```
+  packages/ui/
+  ├── src/
+  │   ├── components/
+  │   ├── lib/
+  │   ├── hooks/
+  │   └── styles/
+  ├── package.json
+  ├── tsconfig.json
+  └── postcss.config.mjs
+  ```
+- Create the utility functions in lib/utils.ts
+
+### Task: Configure Tailwind CSS
+- Set up globals.css with shadcn theme variables
+- Configure postcss.config.mjs
+- Ensure tailwind configuration works with the monorepo
+
+### Task: Initialize shadcn/ui Components
+- Initialize the base components needed to replace DaisyUI:
+  - Button
+  - Card
+  - Input
+  - Select
+  - Dropdown
+  - Dialog
+  - Alert
+  - Other commonly used components
+
+## Application Migration
+
+### Task: Configure the Next.js App
+- Copy relevant files from the source app to apps/web
+- Update Next.js configuration to work with the monorepo
+- Set up proper imports from the UI package
+- Configure app/layout.tsx with the UI provider
+
+### Task: Component Replacement Rules
+- Replace DaisyUI components with shadcn/ui equivalents:
+  - btn → Button
+  - card → Card
+  - input → Input
+  - checkbox → Checkbox
+  - select → Select
+  - modal → Dialog
+  - dropdown → DropdownMenu
+  - alert → Alert
+  - tab → Tabs
+  - badge → Badge
+  - toast → Toast
+  - drawer → Sheet
+  - collapse → Collapsible
+  - toggle → Switch
+  - menu → Command
+  - avatar → Avatar
+  - progress → Progress
+  - textarea → Textarea
+  - tooltip → Tooltip
+
+### Task: Class Transformation Rules
+- Replace DaisyUI classes with shadcn/ui props and variants:
+  - btn → button
+  - btn-primary → variant="default"
+  - btn-secondary → variant="secondary"
+  - btn-accent → variant="outline"
+  - btn-info → variant="outline" className="bg-blue-100 text-blue-800"
+  - btn-success → variant="outline" className="bg-green-100 text-green-800"
+  - btn-warning → variant="outline" className="bg-yellow-100 text-yellow-800"
+  - btn-error → variant="destructive"
+  - btn-ghost → variant="ghost"
+  - btn-link → variant="link"
+  - btn-outline → variant="outline"
+  - btn-sm → size="sm"
+  - btn-md → size="default"
+  - btn-lg → size="lg"
+  - Gap styles should use Flexbox gap or Grid gap instead of DaisyUI spacing
+
+### Task: Replace HTML Structure
+- For each component category, adapt HTML structure to match shadcn/ui requirements:
+  - Modal/Dialog: Replace DaisyUI modal with Dialog from shadcn/ui
+  - Dropdown: Replace with DropdownMenu from shadcn/ui
+  - Form elements: Replace with corresponding shadcn/ui components
+
+## Testing and Validation
+
+### Task: Verify Component Functionality
+- After migration, verify that all components render correctly
+- Test interactive components to ensure functionality is preserved
+- Check responsive behavior
+
+### Task: Fix Style Inconsistencies
+- Adjust any style inconsistencies between DaisyUI and shadcn/ui
+- Add custom styles where needed to match original design
+- Use the shadcn/ui theme system for consistent styling
+
+## Optimization
+
+### Task: Tree-shaking and Performance
+- Ensure imports are optimized for tree-shaking
+- Verify component usage to avoid importing unused components
+- Check bundle size compared to the original DaisyUI implementation
+
+## Example Transformations
+
+### Button Example
+```jsx
+// DaisyUI
+<button class="btn btn-primary m-10">Hello DaisyUI</button>
+
+// shadcn/ui
+import { Button } from "@workspace/ui/components/button";
+
+<Button variant="default" className="m-10">Hello shadcn/ui</Button>
+```
+
+### Card Example
+```jsx
+// DaisyUI
+<div class="card bg-base-100 shadow-xl">
+  <div class="card-body">
+    <h2 class="card-title">Card title</h2>
+    <p>Card content</p>
+    <div class="card-actions justify-end">
+      <button class="btn btn-primary">Action</button>
+    </div>
+  </div>
+</div>
+
+// shadcn/ui
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@workspace/ui/components/card";
+import { Button } from "@workspace/ui/components/button";
+
+<Card>
+  <CardHeader>
+    <CardTitle>Card title</CardTitle>
+  </CardHeader>
+  <CardContent>
+    <p>Card content</p>
+  </CardContent>
+  <CardFooter className="flex justify-end">
+    <Button variant="default">Action</Button>
+  </CardFooter>
+</Card>
+```
+
+### Dialog Example
+```jsx
+// DaisyUI
+<button class="btn" onClick={() => document.getElementById('my_modal_1').showModal()}>Open Modal</button>
+<dialog id="my_modal_1" class="modal">
+  <form method="dialog" class="modal-box">
+    <h3 class="font-bold text-lg">Hello!</h3>
+    <p class="py-4">Press ESC or click outside to close</p>
+  </form>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+// shadcn/ui
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@workspace/ui/components/dialog";
+import { Button } from "@workspace/ui/components/button";
+
+<Dialog>
+  <DialogTrigger asChild>
+    <Button>Open Dialog</Button>
+  </DialogTrigger>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Hello!</DialogTitle>
+      <DialogDescription>Press ESC or click outside to close</DialogDescription>
+    </DialogHeader>
+  </DialogContent>
+</Dialog>
+```

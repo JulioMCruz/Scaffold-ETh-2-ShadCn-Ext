@@ -1,0 +1,279 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+ ---
+description: Rules for migrating from DaisyUI to Tailwind CSS and shadcn/ui styling patterns
+globs: ["**/*.tsx", "**/*.ts", "**/*.css"]
+alwaysApply: false
+---
+# Tailwind CSS and shadcn/ui Styling Migration Rules
+
+## Configuration Setup
+
+### Tailwind Config
+```typescript
+// tailwind.config.ts
+import { type Config } from "tailwindcss"
+import { shadcnPlugin } from "./shadcn-plugin"
+
+export default {
+  darkMode: ["class"],
+  content: ["app/**/*.{ts,tsx}"],
+  theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
+    },
+    extend: {
+      colors: {
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+    },
+  },
+  plugins: [shadcnPlugin],
+} satisfies Config
+```
+
+## Color System Migration
+
+### DaisyUI to Tailwind/shadcn Colors
+- Replace DaisyUI color classes with shadcn equivalents:
+  ```
+  DaisyUI                  shadcn/Tailwind
+  ----------------------------------------
+  bg-primary              bg-primary
+  text-primary            text-primary-foreground
+  bg-secondary            bg-secondary
+  text-secondary          text-secondary-foreground
+  bg-accent              bg-accent
+  text-accent            text-accent-foreground
+  bg-neutral             bg-muted
+  text-neutral           text-muted-foreground
+  bg-base-100            bg-background
+  text-base-content      text-foreground
+  bg-info                bg-blue-100
+  text-info              text-blue-900
+  bg-success             bg-green-100
+  text-success           text-green-900
+  bg-warning             bg-yellow-100
+  text-warning           text-yellow-900
+  bg-error              bg-destructive
+  text-error            text-destructive-foreground
+  ```
+
+## Layout and Spacing
+
+### Grid System
+- Replace DaisyUI grid with Tailwind Grid:
+  ```jsx
+  // DaisyUI
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  
+  // Tailwind
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  ```
+
+### Container
+- Replace DaisyUI container with shadcn container:
+  ```jsx
+  // DaisyUI
+  <div class="container mx-auto px-4">
+  
+  // shadcn
+  <div class="container">
+  ```
+
+### Spacing
+- Use Tailwind's spacing scale:
+  ```
+  DaisyUI                  Tailwind
+  ----------------------------------------
+  p-2                     p-2 (0.5rem)
+  m-4                     m-4 (1rem)
+  gap-2                   gap-2 (0.5rem)
+  ```
+
+## Typography
+
+### Font Styles
+- Replace DaisyUI typography with Tailwind/shadcn:
+  ```
+  DaisyUI                  Tailwind/shadcn
+  ----------------------------------------
+  text-xl                 text-xl
+  font-bold               font-bold
+  text-primary            text-primary-foreground
+  prose                   prose (with @tailwindcss/typography)
+  ```
+
+### Responsive Text
+```jsx
+// DaisyUI
+<h1 class="text-2xl md:text-4xl">
+
+// Tailwind (unchanged)
+<h1 class="text-2xl md:text-4xl">
+```
+
+## Component-Specific Styles
+
+### Button Styles
+```jsx
+// DaisyUI
+<button class="btn btn-primary btn-lg">
+
+// shadcn
+<Button size="lg" variant="default">
+```
+
+### Card Styles
+```jsx
+// DaisyUI
+<div class="card bg-base-100 shadow-xl">
+
+// shadcn
+<Card className="shadow-xl">
+```
+
+### Form Styles
+```jsx
+// DaisyUI
+<input class="input input-bordered" />
+
+// shadcn
+<Input />
+```
+
+## Responsive Design
+
+### Breakpoints
+```typescript
+screens: {
+  'sm': '640px',
+  'md': '768px',
+  'lg': '1024px',
+  'xl': '1280px',
+  '2xl': '1536px',
+}
+```
+
+### Media Queries
+- Use Tailwind's responsive prefixes:
+  ```jsx
+  <div class="flex-col md:flex-row">
+  <div class="w-full lg:w-1/2">
+  ```
+
+## Dark Mode
+
+### Theme Configuration
+```typescript
+// globals.css
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    /* ... other variables ... */
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    /* ... other variables ... */
+  }
+}
+```
+
+### Dark Mode Classes
+- Use class-based dark mode:
+  ```jsx
+  <html class="dark">
+  ```
+- Toggle with JavaScript:
+  ```typescript
+  document.documentElement.classList.toggle('dark')
+  ```
+
+## Animation and Transitions
+
+### Motion
+- Use Framer Motion for complex animations:
+  ```typescript
+  import { motion } from "framer-motion"
+  
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+  >
+  ```
+
+### Transitions
+- Use Tailwind's transition utilities:
+  ```jsx
+  <div class="transition-all duration-300 ease-in-out">
+  ```
+
+## Best Practices
+
+### CSS Organization
+- Use CSS Modules or Tailwind classes
+- Group related styles with @apply
+- Maintain consistent naming conventions
+- Use CSS variables for theming
+
+### Performance
+- Purge unused styles
+- Minimize custom CSS
+- Use JIT mode
+- Implement responsive images
+- Optimize fonts
+
+### Accessibility
+- Use semantic HTML
+- Implement ARIA attributes
+- Ensure sufficient color contrast
+- Support keyboard navigation
+- Test with screen readers
+- 
