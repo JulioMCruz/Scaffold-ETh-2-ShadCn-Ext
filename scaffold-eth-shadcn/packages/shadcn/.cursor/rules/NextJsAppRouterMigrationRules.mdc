@@ -1,0 +1,187 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+ ---
+description: Rules for migrating to Next.js App Router and modern React patterns
+globs: ["**/*.tsx", "**/*.ts"]
+alwaysApply: false
+---
+# Next.js App Router Migration Rules
+
+## Directory Structure
+```
+app/
+├── (auth)/
+│   ├── login/
+│   │   └── page.tsx
+│   └── register/
+│       └── page.tsx
+├── (dashboard)/
+│   └── page.tsx
+├── api/
+│   └── route.ts
+├── components/
+│   ├── ui/
+│   └── forms/
+├── lib/
+│   └── utils.ts
+├── styles/
+│   └── globals.css
+├── layout.tsx
+└── page.tsx
+```
+
+## Core Migration Rules
+
+### Route Migration
+- Move all pages from `pages/` to `app/` directory
+- Create route groups using parentheses: `(auth)`, `(dashboard)`
+- Use `page.tsx` for route components
+- Implement layouts with `layout.tsx`
+- Handle loading states with `loading.tsx`
+- Handle errors with `error.tsx`
+- Create API routes using `route.ts`
+
+### Component Migration
+- Convert to Server Components by default
+- Add 'use client' directive only when needed:
+  ```typescript
+  'use client'
+  
+  import { useState } from 'react'
+  ```
+- Use React Server Components (RSC) patterns:
+  ```typescript
+  // Server Component
+  async function ServerComponent() {
+    const data = await fetchData()
+    return <div>{data}</div>
+  }
+  
+  // Client Component
+  'use client'
+  function ClientComponent() {
+    const [state, setState] = useState()
+    return <div>{state}</div>
+  }
+  ```
+
+### Data Fetching
+- Replace `getStaticProps` and `getServerSideProps` with:
+  ```typescript
+  async function Page() {
+    const data = await fetch('...')
+    return <div>{data}</div>
+  }
+  ```
+- Use React Suspense for loading states:
+  ```typescript
+  import { Suspense } from 'react'
+  
+  export default function Layout({ children }) {
+    return (
+      <Suspense fallback={<Loading />}>
+        {children}
+      </Suspense>
+    )
+  }
+  ```
+
+### Forms and Actions
+- Use Server Actions for form submissions:
+  ```typescript
+  export default function Form() {
+    async function handleSubmit(formData: FormData) {
+      'use server'
+      // Handle form submission
+    }
+    
+    return (
+      <form action={handleSubmit}>
+        {/* Form fields */}
+      </form>
+    )
+  }
+  ```
+
+### Metadata
+- Replace `_document.tsx` and `_app.tsx` with `layout.tsx`:
+  ```typescript
+  export const metadata = {
+    title: 'My App',
+    description: 'Description'
+  }
+  
+  export default function RootLayout({
+    children,
+  }: {
+    children: React.ReactNode
+  }) {
+    return (
+      <html lang="en">
+        <body>{children}</body>
+      </html>
+    )
+  }
+  ```
+
+## Best Practices
+
+### Performance Optimization
+- Use streaming with Suspense boundaries
+- Implement route segments for code splitting
+- Use Image component for optimized images
+- Implement proper caching strategies
+
+### Error Handling
+- Create error boundaries using error.tsx:
+  ```typescript
+  'use client'
+  
+  export default function Error({
+    error,
+    reset,
+  }: {
+    error: Error
+    reset: () => void
+  }) {
+    return (
+      <div>
+        <h2>Something went wrong!</h2>
+        <button onClick={() => reset()}>Try again</button>
+      </div>
+    )
+  }
+  ```
+
+### State Management
+- Use Server Components for static data
+- Implement React Context for shared state
+- Use Server Actions for mutations
+- Consider Zustand or Jotai for complex client state
+
+### Authentication
+- Implement authentication in middleware:
+  ```typescript
+  // middleware.ts
+  export function middleware(request: NextRequest) {
+    const token = request.cookies.get('token')
+    if (!token) {
+      return NextResponse.redirect(new URL('/login', request.url))
+    }
+    return NextResponse.next()
+  }
+  
+  export const config = {
+    matcher: '/dashboard/:path*',
+  }
+  ```
+
+## Testing
+- Use React Testing Library with Jest
+- Implement API route tests
+- Test Server Components
+- Test Client Components with events
+- Test Server Actions
